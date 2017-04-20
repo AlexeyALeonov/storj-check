@@ -34,8 +34,8 @@ get-item (Join-Path $path $files) | %{
     https://www.youtube.com/watch?v=PjbXpdsMIW4
     Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section.'
     }
-    sls "kfs" $file | select -last 1 | % {Write-Warning $_.Line}
-    sls "usedspace" $file | select -last 1 | % {Write-Warning $_.Line}
+    sls "kfs" $file | select -last 1 | % {Write-Host $_.Line}
+    sls "usedspace" $file | select -last 1 | % {Write-Host $_.Line}
     sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
     sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
     sls "delta: (.*) ms" $file | select -last 1 | % {
