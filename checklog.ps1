@@ -36,8 +36,8 @@ get-item (Join-Path $path $files) | %{
     }
     sls "kfs" $file | select -last 1 | % {Write-Warning $_.Line}
     sls "usedspace" $file | select -last 1 | % {Write-Warning $_.Line}
-    sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Warning $_.Line}
-    sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Warning $_.Line}
+    sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
+    sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
     sls "delta: (.*) ms" $file | select -last 1 | % {
         $delta = ''
         $delta = $_.matches.Groups[1].value.ToDecimal([System.Globalization.CultureInfo]::CurrentCulture);
