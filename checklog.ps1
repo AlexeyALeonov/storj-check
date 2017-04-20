@@ -54,7 +54,7 @@ get-item (Join-Path $path $files) | %{
     $nodeid = $null;
     $nodeid = sls 'created .* nodeid (.*)' $file | select -last 1 | %{$_.Matches.Groups[1].Value}
     if (-not $nodeid) {
-        Write-Warning "Please, stop your node, delete the log and start node again. Wait for 10 minutes and upload again.";
+        Write-Host "    Please, stop your node, delete the log and start node again. Wait for 10 minutes and upload again.";
     } else {
         Write-Host nodeid: '`'$nodeid'`'
         $contact = (Invoke-WebRequest ("https://api.storj.io/contacts/" + $nodeid)).Content;
