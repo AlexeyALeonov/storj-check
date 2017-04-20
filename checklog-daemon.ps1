@@ -3,7 +3,7 @@
     $files
 )
 if (-not $path) {$path = "."}
-if (-not $files) {$files = "*.log.txt"}
+if (-not $files) {$files = "*.txt"}
 get-item (Join-Path $path $files) | %{
     $file = $_;
     $nodeid = $null
