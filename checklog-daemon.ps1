@@ -89,4 +89,6 @@ get-item (Join-Path $path $files) | %{
     sls 'consign.*timestamp":"(.*)"' $file | select -last 1 | % {write-host "last consign:", $_.matches.Groups[1].value}
     Write-Host "--------------"
     Write-Host 
+    if (Test-Path (Join-Path $env:TEMP ($file.BaseName + $file.Extension))) {
+        rm -Force $file
 }
