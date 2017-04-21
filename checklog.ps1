@@ -28,11 +28,13 @@ get-item (Join-Path $path $files) | %{
         }
         ($address, $port) = sls "upnp: (.*):(.*)" $file | 
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
-        Write-Host 'Enable UPnP in your router or configure port forwarding.
+        Write-Host '
+    _Enable UPnP in your router or configure port forwarding.
     - Enable NAT/UPnP in your router settings or disable the NAT firewall of your PC (if you have such firewall)
     - Configure port forwarding (best option), you can watch this tutorial where all previous steps are explained: 
     https://www.youtube.com/watch?v=PjbXpdsMIW4
-    Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section.'
+    Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section._
+    '
     }
     sls "kfs" $file | select -last 1 | % {Write-Host $_.Line}
     sls "usedspace" $file | select -last 1 | % {Write-Host $_.Line}
@@ -43,10 +45,12 @@ get-item (Join-Path $path $files) | %{
         $delta = $_.matches.Groups[1].value.ToDecimal([System.Globalization.CultureInfo]::CurrentCulture);
         if ($delta -ge 500.0 -or $delta -le -500.0) {
             Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
-            Write-Host "Your clock is out of sync
+            Write-Host "
+            _Your clock is out of sync
             Synchronize your clock
             http://www.pool.ntp.org/en go here find ntp server closest to you physically and also ping it, 
-            then download this software http://www.timesynctool.com and use ntp server that you found out in previous step"
+            then download this software http://www.timesynctool.com and use ntp server that you found out in previous step_
+            "
         } else {
             write-host clock delta: '`'$delta'` <-- *ok*'
         }
