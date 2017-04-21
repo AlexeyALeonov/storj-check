@@ -22,9 +22,9 @@ get-item (Join-Path $path $files) | %{
         sls '] (.* public.*)' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
     } else {
         if (($upnp | sls 'successful').Matches.Success) {
-            Write-Host ('```'+$upnp+'``` <-- *not optimal*')
+            Write-Host ('`'+$upnp+'` <-- *not optimal*')
         } else {
-            Write-Host ('```'+$upnp+'``` <-- *bad*')
+            Write-Host ('`'+$upnp+'` <-- *bad*')
         }
         ($address, $port) = sls "upnp: (.*):(.*)" $file | 
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
