@@ -89,13 +89,11 @@ get-item (Join-Path $path $files) | %{
     Write-Host "--------------"
     if ($delta -ge 500.0 -or $delta -le -500.0) {
         Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
-        Write-Host "
-        _Your clock is out of sync
+        Write-Host "        _Your clock is out of sync
         Synchronize your clock
         http://www.pool.ntp.org/en go here find ntp server closest to you physically and also ping it, 
-        then download this software http://www.timesynctool.com and use ntp server that you found out in previous step_
+        then download this software http://www.timesynctool.com and use ntp server that you found out in previous step
         "
-        Write-Host
     }
     if ($upnp) {
         if (($upnp | sls 'successful').Matches.Success) {
@@ -104,19 +102,17 @@ get-item (Join-Path $path $files) | %{
             Write-Host ('`'+$upnp+'` <-- *bad*')
         }
     }
-    if (-not $checkPort) {
+    if (-not $checkPort -and $port -and $address) {
         Write-Host ('`port ' + $port + ' is CLOSED on ' + $address +'` <-- *bad*')
     }
-    if (-not $checkPort -or $upnp) {
-        Write-Host '
-        _Enable UPnP in your router or configure port forwarding.
+    if (-not $checkPort -and $port -and $address -or $upnp) {
+        Write-Host '        Enable UPnP in your router or configure port forwarding.
         - Enable NAT/UPnP in your router settings or disable the NAT firewall of your PC (if you have such firewall)
         - Configure port forwarding (best option), you can watch this tutorial where all previous steps are explained: 
         https://www.youtube.com/watch?v=PjbXpdsMIW4
-        Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section._
+        Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section.
         '
     }
-    Write-Host
     if (Test-Path (Join-Path $env:TEMP ($file.BaseName + $file.Extension))) {
         rm -Force $file
     }
