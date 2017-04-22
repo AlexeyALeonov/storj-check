@@ -12,6 +12,7 @@ get-item (Join-Path $path $files) | %{
     Write-Host "====================="
     Write-Host $file.Name;
     Write-Host 
+
     sls 'you are not publicly reachable' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'```')}
     sls 'no public' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
 
@@ -31,8 +32,10 @@ get-item (Join-Path $path $files) | %{
 
     sls "kfs" $file | select -last 1 | % {Write-Host $_.Line}
     sls "usedspace" $file | select -last 1 | % {Write-Host $_.Line}
+
     sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
     sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
+    
     sls "delta: (.*) ms" $file | select -last 1 | % {
         $delta = ''
         $delta = $_.matches.Groups[1].value.ToDecimal([System.Globalization.CultureInfo]::CurrentCulture);
