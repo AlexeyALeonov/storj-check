@@ -82,9 +82,15 @@ get-item (Join-Path $path $files) | %{
         }
     }
     Write-Host
-    sls 'publish .*timestamp":"(.*)"' $file | select -last 1 | % {write-host "last publish:", $_.matches.Groups[1].value}
-    sls 'offer .*timestamp":"(.*)"' $file | select -last 1 | % {write-host "last offer:", $_.matches.Groups[1].value}
-    sls 'consign.*timestamp":"(.*)"' $file | select -last 1 | % {write-host "last consign:", $_.matches.Groups[1].value}
+    sls 'publish .*timestamp":"(.*)"' $file | select -last 1 | % {
+        write-host "last publish ("(sls "publish" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+    }
+    sls 'offer .*timestamp":"(.*)"' $file | select -last 1 | % {
+        write-host "last offer ("(sls "offer" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+    }
+    sls 'consign.*timestamp":"(.*)"' $file | select -last 1 | % {
+        write-host "last consigned ("(sls "consign" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+    }
 
     Write-Host "--------------"
     if ($delta -ge 500.0 -or $delta -le -500.0) {
