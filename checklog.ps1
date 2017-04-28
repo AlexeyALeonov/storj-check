@@ -4,7 +4,7 @@
 )
 if (-not $path) {$path = "."}
 if (-not $files) {$files = "*txt"}
-get-item (Join-Path $path $files) | %{
+Get-Item (Join-Path $path $files) | %{
     $file = $_;
     $nodeid = $null
     $port = ''
@@ -98,7 +98,7 @@ get-item (Join-Path $path $files) | %{
     Write-Host "--------------"
     if ($delta -ge 500.0 -or $delta -le -500.0) {
         Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
-        Write-Host "        _Your clock is out of sync
+        Write-Host "        Your clock is out of sync
         Synchronize your clock
         http://www.pool.ntp.org/en go here find ntp server closest to you physically and also ping it, 
         then download this software http://www.timesynctool.com and use ntp server that you found out in previous step
