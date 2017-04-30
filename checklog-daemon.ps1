@@ -16,8 +16,9 @@ get-item (Join-Path $path $files) | %{
 
     sls 'you are not publicly reachable' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'```')}
     sls 'no public' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
+    sls 'private ' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
 
-    $upnp = ''
+    $upnp = $null
     $upnp = sls 'message":"(.* upnp.*?)"' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
     if (-not $upnp) {
         sls 'message":"(.* public.*?)"' $file | select -last 1 | % {Write-Host $_.Matches.Groups[1].Value}
