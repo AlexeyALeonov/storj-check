@@ -64,10 +64,10 @@ Get-Item (Join-Path $path $files) | %{
         Write-Host "https://api.storj.io/contacts/$nodeid"
         Write-Host '```'$contact'```'
 
-        $contact | sls '"lastSeen":"(.*?)",' | % {Write-Host last seen: '`'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"responseTime":(.*?),' | % {Write-Host response time: '`'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"lastTimeout":"(.*?)",' | % {Write-Host last timeout: '`'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"timeoutRate":(.*?),' | % {Write-Host timeout rate: '`'$_.Matches.Groups[1].Value'`'}
+        $contact | sls '"lastSeen":"(.*?)",' |    % {Write-Host 'last seen     : `'$_.Matches.Groups[1].Value'`'}
+        $contact | sls '"responseTime":(.*?),' |  % {Write-Host 'response time : `'$_.Matches.Groups[1].Value'`'}
+        $contact | sls '"lastTimeout":"(.*?)",' | % {Write-Host 'last timeout  : `'$_.Matches.Groups[1].Value'`'}
+        $contact | sls '"timeoutRate":(.*?),' |   % {Write-Host 'timeout rate  : `'$_.Matches.Groups[1].Value'`'}
         #Write-Host address: '`'$address'`', port: '`'$port'`'
     }
 
@@ -88,13 +88,13 @@ Get-Item (Join-Path $path $files) | %{
     }
     Write-Host
     sls "\[(.*)\].* publish" $file | select -last 1 | % {
-        write-host "last publish ("(sls "publish" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+        write-host 'last publish  : `'$_.matches.Groups[1].value'` ('(sls "publish" $file).Matches.Count')'
     }
     sls "\[(.*)\].* offer" $file | select -last 1 | % {
-        write-host "last offer ("(sls "offer" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+        write-host 'last offer    : `'$_.matches.Groups[1].value'` ('(sls "offer" $file).Matches.Count')'
     }
     sls "\[(.*)\].* consign" $file | select -last 1 | % {
-        write-host "last consigned ("(sls "consign" $file).Matches.Count'): `'$_.matches.Groups[1].value'`'
+        write-host 'last consigned: `'$_.matches.Groups[1].value'` ('(sls "consign" $file).Matches.Count')'
     }
 
     Write-Host "--------------"
