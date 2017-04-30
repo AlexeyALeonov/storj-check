@@ -11,6 +11,7 @@ Get-Item (Join-Path $path $files) | %{
     $address = ''
     $contact = ''
     $upnp = ''
+    $delta = ''
     Write-Host "=====================";
     Write-Host $file.Name;
     Write-Host 

@@ -9,6 +9,7 @@ get-item (Join-Path $path $files) | %{
     $nodeid = $null
     $port = $null
     $address = $null
+    $delta = $null
     Write-Host "====================="
     Write-Host $file.Name;
     Write-Host 
