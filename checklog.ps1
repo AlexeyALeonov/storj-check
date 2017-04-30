@@ -7,11 +7,11 @@ if (-not $files) {$files = "*txt"}
 Get-Item (Join-Path $path $files) | %{
     $file = $_;
     $nodeid = $null
-    $port = ''
-    $address = ''
-    $contact = ''
-    $upnp = ''
-    $delta = ''
+    $port = $null
+    $address = $null
+    $contact = $null
+    $upnp = $null
+    $delta = $null
     Write-Host "=====================";
     Write-Host $file.Name;
     Write-Host 
@@ -97,7 +97,7 @@ Get-Item (Join-Path $path $files) | %{
     }
 
     Write-Host "--------------"
-    if ($delta -ge 500.0 -or $delta -le -500.0) {
+    if ($delta -and ($delta -ge 500.0 -or $delta -le -500.0)) {
         Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
         Write-Host "        Your clock is out of sync
         Synchronize your clock
