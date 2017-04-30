@@ -32,8 +32,8 @@ Get-Item (Join-Path $path $files) | %{
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
     }
 
-    sls "kfs" $file | select -last 1 | % {Write-Host $_.Line}
-    sls "usedspace" $file | select -last 1 | % {Write-Host $_.Line}
+    sls "kfs" $file | select -last 1 | % {Write-Host '```'$_.Line'```  <-- *bad*'}
+    sls "usedspace" $file | select -last 1 | % {Write-Host '```'$_.Line'```  <-- *bad*'}
 
     sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
     sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
