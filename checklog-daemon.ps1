@@ -71,7 +71,6 @@ get-item (Join-Path $path $files) | %{
     Write-Host
     $checkPort = ''
     if ($address -and $port) {
-        Write-Host http://www.yougetsignal.com/tools/open-ports/
         $checkPort = try {
             Invoke-WebRequest ('http://' + $address + ':' + $port)
         } catch [System.Net.WebException] {
@@ -112,6 +111,7 @@ get-item (Join-Path $path $files) | %{
     }
     if (-not $checkPort -and $port -and $address) {
         Write-Host ('`port ' + $port + ' is CLOSED on ' + $address +'` <-- *bad*')
+        Write-Host 'Please, check it:' http://www.yougetsignal.com/tools/open-ports/
     }
     if (-not $checkPort -and $port -and $address -or $upnp) {
         Write-Host '        Enable UPnP in your router or configure port forwarding.

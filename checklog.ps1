@@ -115,6 +115,7 @@ Get-Item (Join-Path $path $files) | %{
     }
     if (-not $checkPort -and $port -and $address) {
         Write-Host ('`port ' + $port + ' is CLOSED on ' + $address +'` <-- *bad*')
+        Write-Host 'Please, check it:' http://www.yougetsignal.com/tools/open-ports/
     }
     if (-not $checkPort -and $port -and $address -or $upnp) {
         Write-Host '        Enable UPnP in your router or configure port forwarding.
