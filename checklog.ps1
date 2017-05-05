@@ -6,21 +6,18 @@ if (-not $path) {$path = "."}
 if (-not $files) {$files = "*txt"}
 Get-Item (Join-Path $path $files) | %{
     $file = $_;
-    $nodeid = $null
-    $port = $null
-    $address = $null
-    $contact = $null
-    $upnp = $null
-    $delta = $null
     Write-Host "=====================";
     Write-Host $file.Name;
-    Write-Host 
 
     sls 'you are not publicly reachable' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'```')}
     sls 'no public' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
     sls 'private ' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
 
     $upnp = $null
+    $address = $null
+    $port = $null
+    $delta = $null
+
     $upnp = sls '] (.* upnp.*)' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
     if (-not $upnp) {
         sls '] (.* public.*)' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
@@ -34,20 +31,21 @@ Get-Item (Join-Path $path $files) | %{
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
     }
 
-    sls "kfs" $file | select -last 1 | % {Write-Host '```'$_.Line'```  <-- *bad*'}
-    sls "usedspace" $file | select -last 1 | % {Write-Host '```'$_.Line'```  <-- *bad*'}
+    sls "sharddata.kfs" $file | select -last 1 | % {Write-Host ('```' + $_.Line + '```  <-- *bad*')}
+    sls "usedspace" $file | select -last 1 | % {Write-Host ('```' + $_.Line + '```  <-- *bad*')}
 
-    sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
-    sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host '`'$_.Line'` <-- *bad*'}
-
+    sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host ('`' + $_.Line + '` <-- *bad*')}
+    sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host ('`' + $_.Line + '` <-- *bad*')}
+    
+    $delta = $null
     sls "delta: (.*) ms" $file | select -last 1 | % {
-        $delta = ''
         $delta = $_.matches.Groups[1].value.ToDecimal([System.Globalization.CultureInfo]::CurrentCulture);
         if ($delta -ge 500.0 -or $delta -le -500.0) {
             Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
         } else {
-            write-host clock delta: '`'$delta'` <-- *ok*'
+            write-host ('clock delta: `' + $delta + '` <-- *ok*')
         }
+        Write-Host 
     }
 
     $nodeid = $null;
@@ -56,45 +54,51 @@ Get-Item (Join-Path $path $files) | %{
     if (-not $nodeid) {
         Write-Host "    Please, stop your node, delete the log and start node again. Wait for 10 minutes and upload again.";
     } else {
-        Write-Host nodeid: '`'$nodeid'`'
         $contact = (Invoke-WebRequest ("https://api.storj.io/contacts/" + $nodeid)).Content;
         $port = $contact | sls '"port":(\d*),' | % {$_.Matches.Groups[1].Value}
         $address = $contact | sls '"address":"(.*?)",' | % {$_.Matches.Groups[1].Value}
 
-        Write-Host "https://api.storj.io/contacts/$nodeid"
-        Write-Host '```'$contact'```'
+        if ($contact) {
+            Write-Host "https://api.storj.io/contacts/$nodeid"
+            Write-Host ('```' + $contact.ToString() + '```')
+            Write-Host 
+        }
 
-        $contact | sls '"lastSeen":"(.*?)",' |    % {Write-Host 'last seen     : `'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"responseTime":(.*?),' |  % {Write-Host 'response time : `'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"lastTimeout":"(.*?)",' | % {Write-Host 'last timeout  : `'$_.Matches.Groups[1].Value'`'}
-        $contact | sls '"timeoutRate":(.*?),' |   % {Write-Host 'timeout rate  : `'$_.Matches.Groups[1].Value'`'}
-        #Write-Host address: '`'$address'`', port: '`'$port'`'
+        $contact | sls '"lastSeen":"(.*?)",' |    % {Write-Host ('last seen     : `' + $_.Matches.Groups[1].Value + '`')}
+        $contact | sls '"responseTime":(.*?),' |  % {Write-Host ('response time : `' + $_.Matches.Groups[1].Value + '`')}
+        $contact | sls '"lastTimeout":"(.*?)",' | % {Write-Host ('last timeout  : `' + $_.Matches.Groups[1].Value + '`')}
+        $contact | sls '"timeoutRate":(.*?),' |   % {Write-Host ('timeout rate  : `' + $_.Matches.Groups[1].Value + '`')}
+        Write-Host 
     }
 
-    Write-Host
     $checkPort = $null
     if ($address -and $port) {
-        Write-Host http://www.yougetsignal.com/tools/open-ports/
         $checkPort = try {
-            Invoke-WebRequest ('http://' + $address + ':' + $port)
+            Invoke-WebRequest ('http://' + $address + ':' + $port) -UseBasicParsing
         } catch [System.Net.WebException] {
             ($_ | sls "get").matches.success
         }
         if ($checkPort) {
-            Write-Host '`'port $port is open on $address'`'
+            Write-Host ('`port ' + $port + ' is open on ' + $address + '`')
         } else {
-            Write-Host ('`port ' + $port + ' is CLOSED on ' + $address +'` <-- *bad*')
+            Write-Host ('`port ' + $port + ' is CLOSED on ' + $address + '` <-- *bad*')
         }
+        Write-Host
     }
-    Write-Host
     sls "\[(.*)\].* publish" $file | select -last 1 | % {
-        write-host 'last publish  : `'$_.matches.Groups[1].value'` ('(sls "publish" $file).Matches.Count')'
+        write-host ('last publish  : `' + $_.matches.Groups[1].value + '` (' + (sls "publish" $file).Matches.Count + ')')
     }
     sls "\[(.*)\].* offer" $file | select -last 1 | % {
-        write-host 'last offer    : `'$_.matches.Groups[1].value'` ('(sls "offer" $file).Matches.Count')'
+        write-host ('last offer    : `' + $_.matches.Groups[1].value + '` (' + (sls "offer" $file).Matches.Count + ')')
     }
     sls "\[(.*)\].* consign" $file | select -last 1 | % {
-        write-host 'last consigned: `'$_.matches.Groups[1].value'` ('(sls "consign" $file).Matches.Count')'
+        write-host ('last consigned: `' + $_.matches.Groups[1].value + '` (' + (sls "consign" $file).Matches.Count + ')')
+    }
+    sls '\[(.*)\].* download' $file | select -last 1 | % {
+        write-host ('last download : `' + $_.matches.groups[1].value + '` (' + (sls 'download' $_.Path).Matches.Count + ')')
+    }; 
+    sls '\[(.*)\].* upload' $file | select -last 1 | % {
+        write-host ('last upload   : `' + $_.matches.groups[1].value + '` (' + (sls 'upload' $_.Path).Matches.Count + ')')
     }
 
     Write-Host "--------------"
