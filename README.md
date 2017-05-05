@@ -18,3 +18,14 @@ Be careful! After checking log at the TEMP folder it's will removing this log!
 
 If no Path specified this would be a current folder.
 Files is `*.txt` by default
+
+
+# Support
+If you want any new feature or you have found a bug, please submit an issue or create a pull request containing fix.
+
+I will be grateful for donations:
+
+    BTC and SJCX: 12GMzcEZQWquBkpqAcnh2aKqvVMEZFk1Nq
+    ETH: 0x8D7a2e3C16d029F838d1F6327449fd46B5daf881
+
+_Thank you very much for your support!_
