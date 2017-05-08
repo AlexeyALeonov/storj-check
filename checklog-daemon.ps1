@@ -10,26 +10,35 @@ Get-Item (Join-Path $path $files) | %{
     Write-Host $file.Name;
     Write-Host
 
+    $isPrivate = $null
     sls 'you are not publicly reachable' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'```')}
     sls 'no public' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
-    sls 'private ' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
+    $isPrivate = sls 'private ' $file | select -Last 1 | %{('```'+$_.Line+'``` <-- *bad*')}
+
+    $opcode1 = $null
+    $opcode2 = $null
+    $opcode3 = $null
+    $opcode1 = sls 'subscribing to topic \"0f01020202\"' $file | select -Last 1
+    $opcode2 = sls 'subscribing to topic \"0f02020202\"' $file | select -Last 1
+    $opcode3 = sls 'subscribing to topic \"0f03020202\"' $file | select -Last 1
 
     $upnp = $null
     $address = $null
     $port = $null
     $delta = $null
 
-    $upnp = sls 'message":"(.* upnp.*?)"' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
+    $upnp = sls 'message":"(.* upnp.*?)"' $file | select -last 1 | % {$_.Line}
     if (-not $upnp) {
         sls 'message":"(.* public.*?)"' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
     } else {
         if (($upnp | sls 'successful').Matches.Success) {
-            Write-Host ('`'+$upnp+'` <-- *not optimal*')
+            Write-Host ('```'+$upnp+'``` <-- *not optimal*')
         } else {
-            Write-Host ('`'+$upnp+'` <-- *bad*')
+            Write-Host ('```'+$upnp+'``` <-- *bad*')
         }
         ($address, $port) = sls "upnp: (.*):(.*)" $file | 
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
+        Write-Host
     }
 
     sls "sharddata.kfs" $file | select -last 1 | % {Write-Host ('```' + $_.Line + '```  <-- *bad*')}
@@ -55,6 +64,7 @@ Get-Item (Join-Path $path $files) | %{
     if (-not $nodeid) {
         Write-Host "    Please, stop your node, delete the log and start node again. Wait for 10 minutes and upload again."
     } else {
+        Write-Host $nodeid
         $contact = $null
         $contact = (Invoke-WebRequest ("https://api.storj.io/contacts/" + $nodeid) -UseBasicParsing).Content;
         $port = $contact | sls '"port":(\d*),' | % {$_.Matches.Groups[1].Value}
@@ -109,6 +119,18 @@ Get-Item (Join-Path $path $files) | %{
     }
 
     Write-Host "--------------"
+    if (-not $opcode1) {Write-Host '`Opcode "0f01020202" not found!`  <-- *bad*'}
+    if (-not $opcode2) {Write-Host '`Opcode "0f02020202" not found!`  <-- *bad*'}
+    if (-not $opcode3) {Write-Host '`Opcode "0f03020202" not found!`  <-- *bad*'}
+    if (-not $opcode1 -or -not $opcode2 -or -not $opcode3) {
+        Write-Host 'You should specify only that opcodes:
+        "0f01020202"
+        "0f02020202"
+        "0f03020202"
+
+        Please, check it in your config!'
+        Write-Host
+    }
     if ($delta -and ($delta -ge 500.0 -or $delta -le -500.0)) {
         Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
         Write-Host "        Your clock is out of sync
@@ -117,11 +139,17 @@ Get-Item (Join-Path $path $files) | %{
         then download this software http://www.timesynctool.com and use ntp server that you found out in previous step
         "
     }
+    if ($isPrivate) {
+        Write-Host $isPrivate
+        Write-Host '        Please, check your `"rpcAddress"` option in configuration of node.'
+        if ($address) {Write-Host ('        It is should be like this: `"rpcAddress": "' + $address + '",`')}
+        Write-Host
+    }
     if ($upnp) {
         if (($upnp | sls 'successful').Matches.Success) {
-            Write-Host ('`'+$upnp+'` <-- *not optimal*')
+            Write-Host ('```'+$upnp+'``` <-- *not optimal*')
         } else {
-            Write-Host ('`'+$upnp+'` <-- *bad*')
+            Write-Host ('```'+$upnp+'``` <-- *bad*')
         }
     }
     if (-not $isPortOpen -and $port -and $address -and -not $isTunneling) {
