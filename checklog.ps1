@@ -64,7 +64,6 @@ Get-Item (Join-Path $path $files) | %{
     if (-not $nodeid) {
         Write-Host "    Please, stop your node, delete the log and start node again. Wait for 10 minutes and upload again."
     } else {
-        Write-Host $nodeid
         $contact = $null
         $contact = (Invoke-WebRequest ("https://api.storj.io/contacts/" + $nodeid) -UseBasicParsing).Content;
         $port = $contact | sls '"port":(\d*),' | % {$_.Matches.Groups[1].Value}
@@ -77,6 +76,8 @@ Get-Item (Join-Path $path $files) | %{
             Write-Host "https://api.storj.io/contacts/$nodeid"
             Write-Host ('```' + $contact.ToString() + '```')
             Write-Host 
+        } else {
+            Write-Host $nodeid
         }
 
         $address |                                % {Write-Host ('   rpcAddress : `' + $_ + '`')}
