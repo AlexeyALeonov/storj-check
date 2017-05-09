@@ -18,9 +18,9 @@ Get-Item (Join-Path $path $files) | %{
     $opcode1 = $null
     $opcode2 = $null
     $opcode3 = $null
-    $opcode1 = sls 'subscribing to topic \"0f01020202\"' $file | select -Last 1
-    $opcode2 = sls 'subscribing to topic \"0f02020202\"' $file | select -Last 1
-    $opcode3 = sls 'subscribing to topic \"0f03020202\"' $file | select -Last 1
+    $opcode1 = sls 'subscribing to topic \\"0f01020202\\"' $file | select -Last 1
+    $opcode2 = sls 'subscribing to topic \\"0f02020202\\"' $file | select -Last 1
+    $opcode3 = sls 'subscribing to topic \\"0f03020202\\"' $file | select -Last 1
 
     $upnp = $null
     $address = $null
