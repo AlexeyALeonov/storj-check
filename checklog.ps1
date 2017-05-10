@@ -11,8 +11,14 @@ Get-Item (Join-Path $path $files) | %{
     Write-Host
 
     $isPrivate = $null
-    sls 'you are not publicly reachable' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'```')}
-    sls 'no public' $file | select -Last 1 | %{Write-Host ('```'+$_.Line+'``` <-- *bad*')}
+    sls 'you are not publicly reachable' $file | select -Last 1 | %{
+        Write-Host ('```')
+        Write-Host ($_.Line+'```')
+    }
+    sls 'no public' $file | select -Last 1 | %{
+        Write-Host ('```')
+        Write-Host ($_.Line+'``` <-- *bad*')
+    }
     $isPrivate = sls 'private ' $file | select -Last 1 | %{('```'+$_.Line+'``` <-- *bad*')}
 
     $opcode1 = $null
@@ -32,17 +38,25 @@ Get-Item (Join-Path $path $files) | %{
         sls '] (.* public.*)' $file | select -last 1 | % {$_.Matches.Groups[1].Value}
     } else {
         if (($upnp | sls 'successful').Matches.Success) {
-            Write-Host ('```'+$upnp+'``` <-- *not optimal*')
+            Write-Host ('```')
+            Write-Host ($upnp+'``` <-- *not optimal*')
         } else {
-            Write-Host ('```'+$upnp+'``` <-- *bad*')
+            Write-Host ('```')
+            Write-Host ($upnp+'``` <-- *bad*')
         }
         ($address, $port) = sls "upnp: (.*):(.*)" $file | 
             select -last 1 | %{$_.matches.Groups[1].value, $_.Matches.Groups[2].value}
         Write-Host
     }
 
-    sls "sharddata.kfs" $file | select -last 1 | % {Write-Host ('```' + $_.Line + '```  <-- *bad*')}
-    sls "usedspace" $file | select -last 1 | % {Write-Host ('```' + $_.Line + '```  <-- *bad*')}
+    sls "sharddata.kfs" $file | select -last 1 | % {
+        Write-Host ('```')
+        Write-Host ($_.Line + '```  <-- *bad*')
+    }
+    sls "usedspace" $file | select -last 1 | % {
+        Write-Host ('```')
+        Write-Host ($_.Line + '```  <-- *bad*')
+    }
 
     sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host ('`' + $_.Line + '` <-- *bad*')}
     sls "Timeout waiting for NTP response." $file | select -last 1 | % {Write-Host ('`' + $_.Line + '` <-- *bad*')}
@@ -74,7 +88,8 @@ Get-Item (Join-Path $path $files) | %{
 
         if ($contact) {
             Write-Host "https://api.storj.io/contacts/$nodeid"
-            Write-Host ('```' + $contact.ToString() + '```')
+            Write-Host ('```') 
+            Write-Host ($contact.ToString() + '```')
             Write-Host 
         } else {
             Write-Host $nodeid
@@ -148,9 +163,11 @@ Get-Item (Join-Path $path $files) | %{
     }
     if ($upnp) {
         if (($upnp | sls 'successful').Matches.Success) {
-            Write-Host ('```'+$upnp+'``` <-- *not optimal*')
+            Write-Host ('```')
+            Write-Host ($upnp+'``` <-- *not optimal*')
         } else {
-            Write-Host ('```'+$upnp+'``` <-- *bad*')
+            Write-Host ('```')
+            Write-Host ($upnp+'``` <-- *bad*')
         }
     }
     if (-not $isPortOpen -and $port -and $address -and -not $isTunneling) {
@@ -162,11 +179,8 @@ Get-Item (Join-Path $path $files) | %{
         Write-Host '`You are using tunneling` <-- *not optimal*'
     }
     if (-not $isPortOpen -and $port -and $address -or $upnp -or $isTunneling) {
-        Write-Host '        Enable UPnP in your router or configure port forwarding.
-        - Enable NAT/UPnP in your router settings or disable the NAT firewall of your PC (if you have such firewall)
-        - Configure port forwarding (best option), you can watch this tutorial where all previous steps are explained: 
-        https://www.youtube.com/watch?v=PjbXpdsMIW4
-        Or you can read docs.storj.io/docs/storjshare-troubleshooting-guide in the "port forwarding" section.
+        Write-Host '        Please, read this manual to fix this: 
+        https://docs.google.com/document/d/1Q87QzIn5UwskzdEaU1zoo7URrkl6Na7FYKrR5TeWNdw/edit#heading=h.3o7alnk
         '
     }
     if (Test-Path (Join-Path $env:TEMP ($file.BaseName + $file.Extension))) {
