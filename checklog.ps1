@@ -50,12 +50,12 @@ Get-Item (Join-Path $path $files) | %{
     }
 
     sls "sharddata.kfs" $file | select -last 1 | % {
-        Write-Host ('```')
-        Write-Host ($_.Line + '```  <-- *bad*')
+        [System.Console]::WriteLine('```')
+        [System.Console]::WriteLine($_.Line + '```  <-- *bad*')
     }
     sls "usedspace" $file | select -last 1 | % {
-        Write-Host ('```')
-        Write-Host ($_.Line + '```  <-- *bad*')
+        [System.Console]::WriteLine('```')
+        [System.Console]::WriteLine($_.Line + '```  <-- *bad*')
     }
 
     sls "System clock is not syncronized with NTP" $file | select -last 1 | % {Write-Host ('`' + $_.Line + '` <-- *bad*')}
@@ -69,7 +69,6 @@ Get-Item (Join-Path $path $files) | %{
         } else {
             write-host ('clock delta: `' + $delta + '` <-- *ok*')
         }
-        Write-Host 
     }
 
     $nodeid = $null
@@ -90,7 +89,6 @@ Get-Item (Join-Path $path $files) | %{
             Write-Host "https://api.storj.io/contacts/$nodeid"
             Write-Host ('```') 
             Write-Host ($contact.ToString() + '```')
-            Write-Host 
         } else {
             Write-Host $nodeid
         }
