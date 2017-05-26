@@ -172,6 +172,9 @@ Get-Item (Join-Path $path $files) | %{
         Write-Host ('`port ' + $port + ' is CLOSED on ' + $address +'` <-- *bad*')
         Write-Host 'Please, check it:' http://www.yougetsignal.com/tools/open-ports/
         Write-Host
+        Write-Host 'Please, read this manual to fix this:
+        https://docs.google.com/document/d/1Q87QzIn5UwskzdEaU1zoo7URrkl6Na7FYKrR5TeWNdw/edit#heading=h.2fk6b3p
+        '
     }
     if ($isTunneling) {
         Write-Host '`You are using tunneling` <-- *not optimal*'
