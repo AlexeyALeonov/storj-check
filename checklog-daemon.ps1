@@ -85,12 +85,10 @@ Get-Item (Join-Path $path $files) | %{
         $isTunneling = $false
         $isTunneling = ($address | sls "storj\.dk").Matches.Success
 
+        Write-Host "https://api.storj.io/contacts/$nodeid"
         if ($contact) {
-            Write-Host "https://api.storj.io/contacts/$nodeid"
             Write-Host ('```') 
             Write-Host ($contact.ToString() + '```')
-        } else {
-            Write-Host $nodeid
         }
 
         $address |                                % {Write-Host ('   rpcAddress : `' + $_ + '`')}
