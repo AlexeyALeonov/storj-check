@@ -145,10 +145,8 @@ Get-Item (Join-Path $path $files) | %{
     }
     if ($delta -and ($delta -ge 500.0 -or $delta -le -500.0)) {
         Write-Host ('clock delta: `' + $delta + '` <-- *bad*')
-        Write-Host "        Your clock is out of sync
-        Synchronize your clock
-        http://www.pool.ntp.org/en go here find ntp server closest to you physically and also ping it, 
-        then download this software http://www.timesynctool.com and use ntp server that you found out in previous step
+        Write-Host "Your clock is out of sync
+        https://docs.storj.io/docs/storjshare-troubleshooting-guide#section-4-synchronize-your-clock
         "
     }
     if ($isPrivate) {
