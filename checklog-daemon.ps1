@@ -171,15 +171,15 @@ Get-Item (Join-Path $path $files) | %{
         Write-Host 'Please, check it:' http://www.yougetsignal.com/tools/open-ports/
         Write-Host
         Write-Host 'Please, read this manual to fix this:
-        https://docs.google.com/document/d/1Q87QzIn5UwskzdEaU1zoo7URrkl6Na7FYKrR5TeWNdw/edit#heading=h.2fk6b3p
+        https://docs.storj.io/docs/storj-share-gui-5xx#section-5-storj-share-troubleshooting
         '
     }
     if ($isTunneling) {
         Write-Host '`You are using tunneling` <-- *not optimal*'
     }
-    if (-not $isPortOpen -and $port -and $address -or $upnp -or $isTunneling) {
-        Write-Host '        Please, read this manual to fix this: 
-        https://docs.google.com/document/d/1Q87QzIn5UwskzdEaU1zoo7URrkl6Na7FYKrR5TeWNdw/edit#heading=h.3o7alnk
+    if ($upnp -or $isTunneling) {
+        Write-Host 'Please, read this manual to fix this: 
+        https://docs.storj.io/docs/storj-share-gui-5xx#section-3-3-2-advanced-configuration
         '
     }
     if (Test-Path (Join-Path $env:TEMP ($file.BaseName + $file.Extension))) {
