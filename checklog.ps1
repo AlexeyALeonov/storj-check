@@ -19,7 +19,8 @@ Get-Item (Join-Path $path $files) | %{
         Write-Host ('```')
         Write-Host ($_.Line+'``` <-- *bad*')
     }
-    $isPrivate = sls 'private ' $file | select -Last 1 | %{('```'+$_.Line+'``` <-- *bad*')}
+    $isPrivate = sls 'private ' $file | select -Last 1 | %{('```
+'+$_.Line+'``` <-- *bad*')}
 
     $opcode1 = $null
     $opcode2 = $null
