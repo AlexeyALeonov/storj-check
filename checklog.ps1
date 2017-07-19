@@ -177,7 +177,7 @@ Get-Item (Join-Path $path $files) | %{
     }
     if ($upnp -or $isTunneling) {
         Write-Host 'Please, read this manual to fix this: 
-        GUI:    https://docs.storj.io/docs/storj-share-gui#section--3-3-2-advanced-configuration-
+        GUI:    https://docs.storj.io/docs/storj-share-gui#section-332-advanced-configuration
         '
     }
     if (Test-Path (Join-Path $env:TEMP ($file.BaseName + $file.Extension))) {
